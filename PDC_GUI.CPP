@@ -29,17 +29,17 @@ TOptionsDlg::TOptionsDlg( PTWindowsObject AParent, LPSTR name )
 {
   WAutoBox = new TCheckBox( this, ID_WCOMPBTN, NULL );
   BAutoBox = new TCheckBox( this, ID_BCOMPBTN, NULL );
-  WLevelEditObj = new TEdit(this, ID_WLEVELEDIT, sizeof(WLevelEdit));
-  BLevelEditObj = new TEdit(this, ID_BLEVELEDIT, sizeof(BLevelEdit));
+  WLevelEditObj = new TEdit(this, ID_WLEVELEDIT, sizeof(WLevelEdit) - 1);
+  BLevelEditObj = new TEdit(this, ID_BLEVELEDIT, sizeof(BLevelEdit) - 1);
   TransferBuffer = (void far *)NULL;
 } // TOptionsDlg::TOptionsDlg()
 
 
 void TOptionsDlg::SetupWindow( void )
 {
-  TChessWindow * MainWin = (TChessWindow *)Parent;
-
   TDialog::SetupWindow();
+
+  TChessWindow * MainWin = (TChessWindow *)Parent;
 
   // Display current values
   WAutoBox->SetCheck( (MainWin->army[0].type == PT_HUMAN)
@@ -50,11 +50,13 @@ void TOptionsDlg::SetupWindow( void )
   sprintf( BLevelEdit, "%d", MainWin->army[1].max_ply );
   WLevelEditObj->Insert( WLevelEdit );
   BLevelEditObj->Insert( BLevelEdit );
+#if 0 // TW 2016/04/29 : Suppressing these four calls to SendDlgItemMsg() fixed the crash that was happening when the Game -> Options menu item was clicked.
   // Are these needed ???
   SendDlgItemMsg( ID_WCOMPBTN, WM_DRAWITEM, NULL, 0 );
   SendDlgItemMsg( ID_BCOMPBTN, WM_DRAWITEM, NULL, 0 );
   SendDlgItemMsg( ID_WLEVELEDIT, WM_DRAWITEM, NULL, 0 );
   SendDlgItemMsg( ID_BLEVELEDIT, WM_DRAWITEM, NULL, 0 );
+#endif
 } // TOptionsDlg::SetupWindow()
 
 
@@ -142,7 +144,9 @@ TChessWindow::TChessWindow(PTWindowsObject AParent, LPSTR ATitle)
     }
   }
 #endif
+  memset( army, 0, 2 * sizeof( army_type ) );
   army[0].sh = army[1].sh = &shared;
+  army[0].max_ply = army[1].max_ply = 3;
 
   Attr.X = Attr.Y = 0;
   Attr.W = 480;

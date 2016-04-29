@@ -6,7 +6,7 @@
 #define	MIN_COL			32
 #define	SQUARE_HEIGHT		32
 #define	SQUARE_WIDTH		32
-#define LEVELEDITSIZE		3
+#define LEVELEDITSIZE		16 // TW 2016/04/29 : Was 3
 
 
 class TOptionsDlg : public TDialog
